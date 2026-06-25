@@ -16,6 +16,57 @@ monochrome, photography-first.
 - Use **only** the tokens defined in DESIGN.md. Never invent colours, font sizes,
   spacing values, or radii.
 
+## Input modes (where the layout comes from)
+
+`DESIGN.md` and `PROTOTYPE.md` answer **how it looks** and **what's in it**. They
+never change. What _does_ change per request is **where the layout and intent come
+from** — the live site, a Figma design, or both. Decide this first, before building.
+
+- **No Figma design attached → Website mode.** Mirror the live site for both
+  layout and content, exactly as today. This is the default.
+- **Figma design attached → Figma mode.** The Figma frame is the source of truth
+  for **layout, structure, and the new flow's intent**. Read it via the Figma Dev
+  Mode MCP; don't guess from the prompt alone.
+- **Figma design attached _and_ the flow shows real products/data → Hybrid mode.**
+  Figma drives the layout; the live site fills it with real content. Read the frame
+  from Figma, then capture the real chrome, data, and imagery from the storefront
+  per [`PROTOTYPE.md`](PROTOTYPE.md).
+
+### Precedence — who wins when sources disagree
+
+Each source owns a different question, so they rarely truly conflict:
+
+- **Brand tokens** (colour, type, spacing, radius) → **`DESIGN.md`, always.** Map
+  any Figma variables onto DESIGN.md tokens; never use raw Figma values. A frame
+  that uses an off-brand colour is still rendered with DESIGN.md tokens — unless
+  the design is _intentionally_ exploring a new token and the designer says so.
+- **Layout, structure, composition, the new flow's intent** → **Figma if attached,**
+  otherwise the live site.
+- **Real content** (chrome, data, prices, copy, imagery) → **`PROTOTYPE.md`**
+  (captured from the live site), in Website _and_ Hybrid mode.
+- **Stack & build rules** → this file (`AGENTS.md`).
+
+In one line: **Figma decides composition, `DESIGN.md` decides the pixels,
+`PROTOTYPE.md` decides the content.**
+
+### Reading a Figma design (Figma & Hybrid modes)
+
+When a design is attached, read the selected frame through the Figma Dev Mode MCP
+before writing any UI:
+
+- **Screenshot** — the visual ground truth for the frame.
+- **Metadata / layer tree** — hierarchy, auto-layout, and spacing to translate
+  into React + Tailwind structure.
+- **Variable definitions** — the design's variables, which you **map onto
+  `DESIGN.md` tokens** (never copy raw hex or px).
+- **Design context / code** — generated structure to adapt into the stack; restyle
+  it fully from DESIGN.md tokens (its defaults are off-brand).
+
+Then, in **Hybrid mode**, fill the structure with real products, prices, and
+imagery captured from the storefront per [`PROTOTYPE.md`](PROTOTYPE.md). If the
+frame implies content not yet captured, flag it and capture the real value — never
+silently fake it.
+
 ## Content realism (the difference between on-brand and real)
 
 A correct prototype mirrors the live site; only the new flow being explored is
