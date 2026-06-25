@@ -22,6 +22,10 @@ A correct prototype mirrors the live site; only the new flow being explored is
 new. The starter ships **no fixtures** — capture what the flow needs, per project.
 Per [`PROTOTYPE.md`](PROTOTYPE.md):
 
+- **Default market: Spain.** Unless the prompt names another market, capture from
+  the Spanish storefront (`https://www.massimodutti.com/es/`), write the UI and
+  copy in **Spanish**, and show prices in **euros (€)**.
+
 - **Capture only what you need.** Pull the real logo, header, and footer (and the
   few products/filters the screen shows) from the live site into the project —
   never the whole catalogue.

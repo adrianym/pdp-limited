@@ -19,10 +19,27 @@ invent them.
 
 ### Table of contents
 
+[Market & locale](#market--locale) ·
 [The idea: capture what you need](#the-idea-capture-what-you-need) ·
 [What to capture](#what-to-capture) · [Hard rules](#hard-rules) ·
 [Imagery](#imagery) · [Extending with new functionality](#extending-with-new-functionality) ·
 [Legal & sourcing](#legal--sourcing)
+
+---
+
+## Market & locale
+
+Unless a prompt names a different market explicitly, every prototype targets the
+**Spanish market**.
+
+- **MUST** capture all chrome, data, and imagery from the Spanish storefront —
+  `https://www.massimodutti.com/es/`.
+- **MUST** write the prototype UI and copy in **Spanish** (es-ES), using the
+  brand voice from `DESIGN.md`.
+- **MUST** show prices in **euros (€)** with Spanish formatting (e.g. `49,95 €`).
+- **MAY** target another market **only** when the prompt specifies it (e.g.
+  "use the UK market"); then capture from that market's storefront and use its
+  language and currency throughout.
 
 ---
 
@@ -53,7 +70,7 @@ Capture, in order, only as far as the flow requires:
    newsletter, country/language, legal). Rebuild them as components styled from
    `DESIGN.md` tokens — match the structure, not their raw CSS.
 2. **Just-enough data (when the flow shows products).** A handful of real
-   products — name, £ price, colour names, sizes, category — and the real filter
+   products — name, € price, colour names, sizes, category — and the real filter
    facets / sort options offered on that page.
 3. **Image URLs.** Record each product's public CDN image URL (see
    [Imagery](#imagery)) — don't download the files.
