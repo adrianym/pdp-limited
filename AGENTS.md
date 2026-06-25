@@ -9,8 +9,33 @@ monochrome, photography-first.
 - **Read [`DESIGN.md`](DESIGN.md) first, every time.** It defines every colour,
   type setting, spacing step, radius, component, and rule. It wins over anything
   here if they ever disagree.
+- **Then read [`PROTOTYPE.md`](PROTOTYPE.md).** It defines the content & realism
+  contract — the real chrome, data, icons, and imagery a prototype must use so it
+  mirrors massimodutti.com instead of looking generic. Both files are mandatory:
+  `DESIGN.md` governs how it looks, `PROTOTYPE.md` governs what's in it.
 - Use **only** the tokens defined in DESIGN.md. Never invent colours, font sizes,
   spacing values, or radii.
+
+## Content realism (the difference between on-brand and real)
+
+A correct prototype mirrors the live site; only the new flow being explored is
+new. The starter ships **no fixtures** — capture what the flow needs, per project.
+Per [`PROTOTYPE.md`](PROTOTYPE.md):
+
+- **Capture only what you need.** Pull the real logo, header, and footer (and the
+  few products/filters the screen shows) from the live site into the project —
+  never the whole catalogue.
+- **Real chrome.** Build full pages on the captured real header, footer, and logo
+  — never improvise a nav bar, footer, or look-alike mark.
+- **Real data.** Use captured real products, prices, colours, sizes, categories,
+  and filters — never invent them.
+- **Real icons.** Use the captured icon set — never draw new icons or pull in a
+  third-party set.
+- **Real imagery.** Reference the public-CDN product image URLs — never random
+  stock or committed image files.
+- **Never lorem ipsum.** Use the brand voice; placeholder copy is off-brand.
+- If the flow needs something not captured yet, flag it and capture the real
+  value — do not silently fake it.
 
 ## Stack
 

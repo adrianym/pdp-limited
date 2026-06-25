@@ -9,6 +9,7 @@ repo, so every output looks like Massimo Dutti.
 | File | Purpose |
 | --- | --- |
 | [`DESIGN.md`](DESIGN.md) | The source of truth — every colour, type setting, spacing step, radius, component, and rule. |
+| [`PROTOTYPE.md`](PROTOTYPE.md) | The content & realism contract — the real chrome, data, icons, and imagery a prototype must use to mirror the live site. |
 | [`AGENTS.md`](AGENTS.md) | How an AI agent should use `DESIGN.md` and which stack to build in. |
 | [`README.md`](README.md) | The per-project README template — rewritten for each new project. |
 | `STARTER.md` | This file — how the starter works and how to evolve it. |
