@@ -16,6 +16,8 @@ monochrome, photography-first.
 
 - **React + TypeScript** for prototypes.
 - **Tailwind CSS** for styling, configured from the DESIGN.md tokens.
+- **pnpm** as the package manager. Use `pnpm` for all install/run/add commands
+  (e.g. `pnpm install`, `pnpm add`, `pnpm dev`). Never use `npm` or `yarn`.
 - No extra UI libraries unless asked. If you use one (e.g. Radix for
   accessibility), restyle it fully — its defaults (rounded corners, shadows) are
   off-brand.
