@@ -1,0 +1,222 @@
+{
+  "$schema": "./holyguide.schema.json",
+  "meta": {
+    "source": "https://holyguide.es",
+    "framework": "holygrail2/holygrail5",
+    "stack": "Angular + TypeScript; CSS framework-agnostic SCSS",
+    "captured": "2026-06-29",
+    "components": 24
+  },
+  "components": {
+    "button": {
+      "name": "Button",
+      "description": "Base .btn plus role + size + typography (label-m ttu). One primary per section; everything else secondary.",
+      "base": "btn",
+      "variants": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "tertiary": "btn-tertiary",
+        "link": "btn-link",
+        "square": "btn-square",
+        "quick": "btn-quick",
+        "feel": "btn-feel",
+        "secondary-feel": "btn-secondary-feel",
+        "limited": "btn-limited"
+      },
+      "sizes": ["btn--mini", "btn--small", "btn--medium", "btn--large", "btn--full", "btn--xxl"],
+      "states": ["disabled", "btn-loading", "is-active", "btn-noselected"],
+      "rules": [
+        "One btn-primary per section; rest secondary.",
+        "Sharp corners, monochrome. primary=black/white, hover #737373, disabled #f0f0f0.",
+        "Use .has-light for white-on-dark contexts. Icons via <md-icon name>."
+      ],
+      "example": "<button class=\"btn btn-primary btn--full label-m ttu\">Añadir al carrito</button>",
+      "ref": "https://holyguide.es/buttons/"
+    },
+    "input": {
+      "name": "Input",
+      "description": "Text fields, float-label is the default pattern.",
+      "base": "input",
+      "variants": { "float-label": "form-input-label-2", "ico-pre": "has-ico-pre", "ico-post": "has-ico-post", "password": "form-input-pass", "prefix": "form-prefix" },
+      "states": ["is-error", "disabled (input-notouch)", "ok-input"],
+      "classes": { "wrapper": "form-input-label-2", "error": "validation-error-wrap / c-error", "iconSlot": "ico-pre / ico-post", "height": "48px" },
+      "example": "<div class=\"form-input-label-2\"><input class=\"input\" type=\"text\" placeholder=\" \" /><label>Email *</label></div>",
+      "ref": "https://holyguide.es/input/"
+    },
+    "select": {
+      "name": "Select",
+      "description": "Native select reset with variants.",
+      "base": "select",
+      "variants": { "flat": "select-flat", "flat-no-icon": "select-flat-no-icon", "secondary-rd": "select-secondary-rd", "label": "select-label", "box": "select-box", "special": "form-input-select md-pristine" },
+      "sizes": ["w-100"],
+      "example": "<div class=\"select\"><select><option>S</option><option>M</option></select></div>",
+      "ref": "https://holyguide.es/select/"
+    },
+    "checkbox": {
+      "name": "Checkbox / Radio",
+      "description": "Selection controls: box, text, switch, radio, card, image.",
+      "base": "checkbox-item",
+      "variants": { "box": "checkbox-item-box", "text": "checkbox-item", "switch": "checkbox-item-2", "radio": "checkbox-radio", "card": "checkbox-card", "image": "checkbox-item-img" },
+      "example": "<div class=\"checkbox-item\"><input id=\"c1\" type=\"checkbox\"/><label for=\"c1\"><i class=\"icon\"></i><span class=\"title-m\">Texto</span></label></div>",
+      "ref": "https://holyguide.es/checkbox/"
+    },
+    "link": {
+      "name": "Link",
+      "description": "Black + underline, never blue. Underline, raw, and icon variants.",
+      "base": "link-line",
+      "variants": { "line": "link-line", "raw": "link-raw", "icon-pre": "link-svg-pre", "icon-post": "link-svg-post" },
+      "example": "<a class=\"link-line\" href=\"#\">link-line</a>",
+      "ref": "https://holyguide.es/links/"
+    },
+    "tabs": {
+      "name": "Tabs",
+      "description": ".tabs2 list, selectable, line/center/around/equal/button variants.",
+      "base": "tabs2",
+      "variants": { "left": "tabs2", "center": "tabs2 is-center", "around": "tabs2 is-around", "equal": "tabs2 + ul.list-equal", "button": "tabs2 + btn-tertiary tab", "resetfirst": "tabs-resetfirst" },
+      "states": ["is-active"],
+      "example": "<div class=\"tabs2 is-center\"><ul><li class=\"is-active\"><a class=\"tab\">Pictures</a></li><li><a class=\"tab\">Music</a></li></ul></div>",
+      "ref": "https://holyguide.es/tabs/"
+    },
+    "tag": {
+      "name": "Tag",
+      "description": "Status labels for price/availability/novelty/personalisation.",
+      "base": "btn tag-*",
+      "variants": { "alert": "tag-alert", "info": "tag-info", "valid": "tag-valid", "feel": "tag-feel", "limited": "tag-limited" },
+      "example": "<button class=\"btn tag-valid\">tag-valid</button>",
+      "ref": "https://holyguide.es/tags/"
+    },
+    "modal": {
+      "name": "Modal",
+      "description": "Overlay; sizes/margins/options driven by Angular ModalService enums.",
+      "base": "modalx",
+      "sizes": ["modalx-xs (295)", "modalx-sm (445)", "modalx-md (595)", "modalx-lg (899)", "modalx-xl (950)"],
+      "variants": { "margins": "modalx-0/16/24/32/40/0-24", "options": "HIDE_TITLE / HIDE_X / FULL_MOBILE / FEEL_BG / TRANSPARENT_BACKGROUND" },
+      "example": "this.modalService.openModalFromComponent(null, MyModal, null, ModalSizes.SIZE_M, ModalMargins.MARGIN_24, [ModalOptions.HIDE_TITLE]);",
+      "ref": "https://holyguide.es/token-modals/"
+    },
+    "drawer": {
+      "name": "Drawer",
+      "description": "Side panel. Header/body/footer; API toggleOpenDrawer/toggleCloseDrawer.",
+      "base": "drawer",
+      "sizes": ["drawer-sm (424)", "drawer-xl (720)"],
+      "classes": { "header": "drawer-header", "title": "drawer-title", "body": "drawer-body", "footer": "drawer-footer" },
+      "example": "<div class=\"drawer drawer-sm\"><div class=\"drawer-header\"><div class=\"drawer-title\">Título</div></div><div class=\"drawer-body\">…</div><div class=\"drawer-footer\"><button class=\"btn btn-primary text-m btn--full\">Aceptar</button></div></div>",
+      "ref": "https://holyguide.es/token-drawer/"
+    },
+    "bottom-sheet": {
+      "name": "Bottom Sheet",
+      "description": "Mobile-only slide-up panel for size/add-to-cart/filters. Use drawer/modal on desktop.",
+      "base": "md-bottom-sheet",
+      "classes": { "header": "md-bottom-sheet-header", "content": "md-bottom-sheet-content", "body": "md-bottom-sheet-body", "footer": "md-bottom-sheet-footer" },
+      "a11y": ["role=dialog", "aria-modal=true", "footer CTA always visible", "focus first interactive element"],
+      "example": "<md-bottom-sheet><md-bottom-sheet-header><h2 class=\"title-m ttu\">Selecciona tu talla</h2></md-bottom-sheet-header><md-bottom-sheet-content></md-bottom-sheet-content><md-bottom-sheet-footer><button class=\"btn btn-primary btn--full label-m ttu\">Añadir al carrito</button></md-bottom-sheet-footer></md-bottom-sheet>",
+      "ref": "https://holyguide.es/components/bottom-sheet/"
+    },
+    "accordion": {
+      "name": "Accordion",
+      "description": "Collapsible panels (PDP composition/care/details). [multi] allows several open.",
+      "base": "md-accordion",
+      "classes": { "panel": "md-accordion-panel", "title": "md-accordion-title", "content": "md-accordion-content", "button": "md-toggle-button btn btn--full btn-link", "arrow": "md-arrow-anim" },
+      "states": ["md-toggle-item.is-active"],
+      "example": "<md-accordion [multi]=\"false\"><md-accordion-panel><md-accordion-title><button class=\"md-toggle-button btn btn--full btn-link text-m\">Composición</button></md-accordion-title><md-accordion-content><p class=\"text-m p-16\">…</p></md-accordion-content></md-accordion-panel></md-accordion>",
+      "ref": "https://holyguide.es/components/accordion/"
+    },
+    "size-selector": {
+      "name": "Size Selector",
+      "description": "PDP size picker with availability states.",
+      "base": "hg-product-size-selector",
+      "states": ["is-active", "is-recommended", "is-sold-out", "coming-soon (c-middle-grey)"],
+      "classes": { "item": "hg-product-size-selector-item", "btn": "hg-product-size-selector-btn label-m ttu", "align": "content-start / content-center / min-h-32" },
+      "a11y": ["sold-out aria-disabled=true", "recommended needs tooltip", "many sizes on mobile → bottom sheet"],
+      "example": "<ul class=\"hg-product-size-selector content-start\"><li class=\"hg-product-size-selector-item is-active\"><button class=\"btn btn-tertiary hg-product-size-selector-btn label-m ttu tab\"><span>L</span></button></li></ul>",
+      "ref": "https://holyguide.es/components/size-selector/"
+    },
+    "stepper": {
+      "name": "Stepper",
+      "description": "Quantity control (cart). Angular quantity-stepper. 40x40 buttons.",
+      "base": "stepper",
+      "classes": { "btn": "stepper-btn", "value": "stepper-input label-m", "minus": "minus-icon", "plus": "plus-icon" },
+      "states": ["stepper-btn.disabled"],
+      "a11y": ["aria-live=polite on value", "disable - at min", "disable + at max", "touch target 44px mobile"],
+      "example": "<div class=\"stepper\"><button class=\"stepper-btn\" aria-label=\"Disminuir\"><div class=\"minus-icon\"></div></button><div class=\"stepper-input label-m\">2</div><button class=\"stepper-btn\" aria-label=\"Aumentar\"><div class=\"plus-icon\"></div></button></div>",
+      "ref": "https://holyguide.es/components/stepper/"
+    },
+    "spinner": {
+      "name": "Spinner",
+      "description": "Loaders: inline 16px, section 32px, full-page with logo.",
+      "base": "md-spinner",
+      "variants": { "inline": "md-spinner", "section": "md-loader / preloader-cms", "page": "show-md-loader" },
+      "a11y": ["role=status", "aria-label=Cargando", "disable button while loading", "never spinner + skeleton together"],
+      "example": "<div class=\"md-spinner\"><svg class=\"circular-loader\" viewBox=\"25 25 50 50\"><circle class=\"loader-path\" cx=\"50\" cy=\"50\" r=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/></svg></div>",
+      "ref": "https://holyguide.es/components/spinner/"
+    },
+    "skeleton": {
+      "name": "Skeleton",
+      "description": "Animated placeholders for cards/text/images; match real dimensions to avoid layout shift.",
+      "base": "sk-load",
+      "variants": { "ratio-2-3": "skeleton_2-3", "ratio-1-1": "skeleton_1-1", "ratio-16-9": "skeleton_16-9", "text-line": "sk-hg-body-m", "img": "skeleton-img" },
+      "states": ["is-loading", "is-anim", "sk-load1…sk-load8 (staggered)"],
+      "example": "<div class=\"sk-text-zone\"><div class=\"sk-hg-body-m\"></div><div class=\"sk-hg-body-m\"></div></div>",
+      "ref": "https://holyguide.es/components/skeleton/"
+    },
+    "toast": {
+      "name": "Toast",
+      "description": "Bottom transient confirmation; black bg, auto-dismiss 4-5s, manual close. Not for critical errors.",
+      "base": "banner-toast",
+      "variants": { "toast": "banner-toast", "notification-bar": "notification-bar" },
+      "states": ["appear"],
+      "example": "<div class=\"banner-toast appear px-20 p-16\"><div class=\"is-flex content-sp-between align-items-center\"><p class=\"text-m\">Pedido confirmado</p><button class=\"btn btn-tertiary text-m\"><md-icon name=\"close-s\" class=\"is-invert\"></md-icon></button></div></div>",
+      "ref": "https://holyguide.es/components/toast/"
+    },
+    "product-view": {
+      "name": "Product View",
+      "description": "PLP card: rollover image, quick wishlist/add, size selector, name/price/colour/tags.",
+      "base": "p-view",
+      "variants": { "default": "p-view", "limited-text": "limited-text", "no-text": "no-text" },
+      "ref": "https://holyguide.es/productview/"
+    },
+    "banner": {
+      "name": "Banners",
+      "description": "Visual comms: image+text+CTA in hero, editorial, promo formats.",
+      "base": "banner",
+      "ref": "https://holyguide.es/components/Banners"
+    },
+    "marketing-spot": {
+      "name": "Marketing Spot",
+      "description": "Editorial/promo block (homepage, category) image+text+CTA.",
+      "base": "marketing-spot",
+      "ref": "https://holyguide.es/token-mktspot/"
+    },
+    "datalist": {
+      "name": "Datalist",
+      "description": "Text input + predictive autocomplete.",
+      "base": "datalist",
+      "ref": "https://holyguide.es/datalist/"
+    },
+    "list": {
+      "name": "List",
+      "description": "Ordered/unordered/definition lists with icon, separator, indent variants.",
+      "base": "list",
+      "variants": { "mini": "list-mini", "equal": "list-equal" },
+      "ref": "https://holyguide.es/list/"
+    },
+    "tooltip": {
+      "name": "Tooltip",
+      "description": "Hover label, 4 directions (top/bottom × left/right), supports rich content.",
+      "base": "tooltip",
+      "ref": "https://holyguide.es/tooltip/"
+    },
+    "feel-card": {
+      "name": "Feel Card",
+      "description": "Card for the Feel loyalty programme.",
+      "base": "feel-card",
+      "ref": "https://holyguide.es/token-productview/"
+    },
+    "store-list": {
+      "name": "Store List",
+      "description": "Store listing component.",
+      "base": "store-list",
+      "ref": "https://holyguide.es/token-store-list/"
+    }
+  }
+}
