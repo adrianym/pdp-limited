@@ -13,8 +13,15 @@ monochrome, photography-first.
   contract — the real chrome, data, icons, and imagery a prototype must use so it
   mirrors massimodutti.com instead of looking generic. Both files are mandatory:
   `DESIGN.md` governs how it looks, `PROTOTYPE.md` governs what's in it.
+- **Then read [`HOLYGUIDE.md`](HOLYGUIDE.md).** It is the component contract — the
+  real Massimo Dutti design system ("Holy Guide"), with the in-production tokens,
+  component class names, variants, and states. When a screen needs a real UI
+  element (button, input, modal, drawer, tabs, size selector…), use the Holy Guide
+  component instead of improvising. Live reference: https://holyguide.es/components/.
+  Resolve exact class names from [`holyguide.components.json`](holyguide.components.json)
+  (validated by [`holyguide.schema.json`](holyguide.schema.json)).
 - Use **only** the tokens defined in DESIGN.md. Never invent colours, font sizes,
-  spacing values, or radii.
+  spacing values, or radii. Never invent components — use Holy Guide.
 
 ## Input modes (where the layout comes from)
 
@@ -47,7 +54,7 @@ Each source owns a different question, so they rarely truly conflict:
 - **Stack & build rules** → this file (`AGENTS.md`).
 
 In one line: **Figma decides composition, `DESIGN.md` decides the pixels,
-`PROTOTYPE.md` decides the content.**
+`PROTOTYPE.md` decides the content, `HOLYGUIDE.md` decides the components.**
 
 ### Reading a Figma design (Figma & Hybrid modes)
 

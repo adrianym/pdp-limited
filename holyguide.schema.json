@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://holyguide.es/holyguide.components.schema.json",
+  "title": "Holy Guide components",
+  "description": "Machine-readable index of Massimo Dutti Holy Guide components for AI prototyping. Tokens reference DESIGN.md/HOLYGUIDE.md by name; never raw hex/px here.",
+  "type": "object",
+  "required": ["meta", "components"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["source", "framework", "components"],
+      "properties": {
+        "source": { "type": "string", "description": "Origin of the data, e.g. holyguide.es" },
+        "framework": { "type": "string", "description": "CSS framework + version (holygrail2/5)" },
+        "stack": { "type": "string", "description": "Implementation stack (Angular)" },
+        "captured": { "type": "string", "description": "ISO date the data was captured" },
+        "components": { "type": "integer", "description": "Component count" }
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name", "base", "ref"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "base": { "type": "string", "description": "Base class or custom element" },
+          "variants": { "type": "object", "additionalProperties": { "type": "string" } },
+          "sizes": { "type": "array", "items": { "type": "string" } },
+          "states": { "type": "array", "items": { "type": "string" } },
+          "classes": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Key sub-element classes" },
+          "rules": { "type": "array", "items": { "type": "string" } },
+          "a11y": { "type": "array", "items": { "type": "string" } },
+          "example": { "type": "string", "description": "Minimal real markup snippet" },
+          "ref": { "type": "string", "format": "uri" }
+        }
+      }
+    }
+  }
+}

@@ -15,6 +15,8 @@ rules travel with the repo:
 - [`DESIGN.md`](DESIGN.md) — the source of truth for every token and rule.
 - [`PROTOTYPE.md`](PROTOTYPE.md) — the content & realism contract (real chrome,
   data, icons, and imagery the prototype must use).
+- [`HOLYGUIDE.md`](HOLYGUIDE.md) — the component contract: the Holy Guide design
+  system (tokens, components, variants) at [holyguide.es](https://holyguide.es/).
 - [`AGENTS.md`](AGENTS.md) — how the AI should use `DESIGN.md`.
 
 ## Notes
