@@ -22,6 +22,10 @@ const imgMiniNecklace =
   'https://www.figma.com/api/mcp/asset/59911518-0e42-4c8b-9ca1-b5d16b37591f'
 const imgMiniShoe = 'https://www.figma.com/api/mcp/asset/9fcdff23-8067-4e1f-81d0-8854691ab3c0'
 
+const HERO_WHEEL_TO_HORIZONTAL_RATIO = 2
+const HERO_LERP_FACTOR = 0.4
+const HERO_MAX_LERP_STEP_PX = 72
+
 type OptimizedImageProps = {
   src: string
   alt: string
@@ -61,6 +65,18 @@ function App() {
   const heroHorizontalRafRef = useRef<number | null>(null)
   const hasCompletedHeroHorizontalRef = useRef(false)
 
+  const normalizeWheelDeltaY = (event: globalThis.WheelEvent) => {
+    if (event.deltaMode === 1) {
+      return event.deltaY * 16
+    }
+
+    if (event.deltaMode === 2) {
+      return event.deltaY * window.innerHeight
+    }
+
+    return event.deltaY
+  }
+
   const animateHeroTrack = () => {
     const track = heroTrackRef.current
     if (!track) {
@@ -69,19 +85,17 @@ function App() {
     }
 
     const delta = heroHorizontalTargetRef.current - track.scrollLeft
-
     if (Math.abs(delta) < 0.5) {
       track.scrollLeft = heroHorizontalTargetRef.current
       heroHorizontalRafRef.current = null
 
       const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0)
-      if (track.scrollLeft >= maxScroll - 1) {
-        hasCompletedHeroHorizontalRef.current = true
-      }
+      hasCompletedHeroHorizontalRef.current = track.scrollLeft >= maxScroll - 1
       return
     }
 
-    track.scrollLeft += delta * 0.2
+    const step = Math.sign(delta) * Math.min(Math.abs(delta * HERO_LERP_FACTOR), HERO_MAX_LERP_STEP_PX)
+    track.scrollLeft += step
     heroHorizontalRafRef.current = requestAnimationFrame(animateHeroTrack)
   }
 
@@ -160,11 +174,13 @@ function App() {
     }
 
     const onWindowWheel = (event: globalThis.WheelEvent) => {
-      if (event.deltaY <= 0) {
+      const normalizedDeltaY = normalizeWheelDeltaY(event)
+      if (normalizedDeltaY === 0) {
         return
       }
 
-      if (window.scrollY > 2 || hasCompletedHeroHorizontalRef.current) {
+      const isAtTop = window.scrollY <= 2
+      if (!isAtTop) {
         return
       }
 
@@ -174,17 +190,43 @@ function App() {
         return
       }
 
-      const remainingScroll = maxScroll - track.scrollLeft
-      if (remainingScroll <= 0.5) {
-        hasCompletedHeroHorizontalRef.current = true
+      if (normalizedDeltaY > 0) {
+        if (hasCompletedHeroHorizontalRef.current) {
+          return
+        }
+
+        const remainingScroll = maxScroll - track.scrollLeft
+        if (remainingScroll <= 0.5) {
+          hasCompletedHeroHorizontalRef.current = true
+          return
+        }
+
+        const horizontalPush =
+          Math.abs(normalizedDeltaY) * HERO_WHEEL_TO_HORIZONTAL_RATIO
+
+        event.preventDefault()
+        const nextScrollLeft = Math.min(maxScroll, track.scrollLeft + horizontalPush)
+        heroHorizontalTargetRef.current = nextScrollLeft
+        startHeroAnimation()
         return
       }
 
-      event.preventDefault()
-      heroHorizontalTargetRef.current = Math.min(
-        maxScroll,
-        heroHorizontalTargetRef.current + event.deltaY,
+      if (track.scrollLeft <= 0.5) {
+        hasCompletedHeroHorizontalRef.current = false
+        heroHorizontalTargetRef.current = 0
+        track.scrollLeft = 0
+        return
+      }
+
+      const horizontalPush = Math.max(
+        Math.abs(normalizedDeltaY) * HERO_WHEEL_TO_HORIZONTAL_RATIO,
+        0,
       )
+
+      event.preventDefault()
+      hasCompletedHeroHorizontalRef.current = false
+      const nextScrollLeft = Math.max(0, track.scrollLeft - horizontalPush)
+      heroHorizontalTargetRef.current = nextScrollLeft
       startHeroAnimation()
     }
 
