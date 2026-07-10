@@ -1,0 +1,7 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "true": true,
+        "mv": true,
+        "git rev-parse": true
+    }
+}

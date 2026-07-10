@@ -1,0 +1,52 @@
+:root {
+  --text: #000000;
+  --text-subtle: #555555;
+  --text-subtlest: #767676;
+  --text-muted: #696969;
+  --surface: #ffffff;
+  --surface-sunken: #f4f4f4;
+  --surface-inverse: #000000;
+  --border: #000000;
+  --border-subtle: #bbbbbb;
+  --focus: #3860be;
+  --accent-sand: #dacfbf;
+
+  --space-0: 0;
+  --space-50: 4px;
+  --space-100: 8px;
+  --space-150: 12px;
+  --space-200: 16px;
+  --space-300: 24px;
+  --space-400: 32px;
+  --space-600: 48px;
+
+  --font-body: 'SuisseIntl', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-heading: 'Suisse Works', 'Times New Roman', serif;
+
+  --type-body: 400 16px/1.5 var(--font-body);
+  --type-body-small: 400 13px/1.4 var(--font-body);
+  --type-label: 400 12px/1.5 var(--font-body);
+  --type-label-xs: 400 9px/1.4 var(--font-body);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  font: var(--type-body);
+}
