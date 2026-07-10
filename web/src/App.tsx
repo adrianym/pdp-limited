@@ -1,5 +1,6 @@
 import {
   type ImgHTMLAttributes,
+  type MouseEvent,
   type PointerEvent,
   useEffect,
   useRef,
@@ -21,6 +22,69 @@ const imgMiniDress = 'https://www.figma.com/api/mcp/asset/7ae6630e-1a76-4bcc-94d
 const imgMiniNecklace =
   'https://www.figma.com/api/mcp/asset/59911518-0e42-4c8b-9ca1-b5d16b37591f'
 const imgMiniShoe = 'https://www.figma.com/api/mcp/asset/9fcdff23-8067-4e1f-81d0-8854691ab3c0'
+
+const recommendationProducts = [
+  {
+    name: 'Pendientes aro media luna',
+    price: '29,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/bf5c/dc1f/9be146e086b4/b2b6fddcad91/04605735808-o1/04605735808-o1.jpg?ts=1773851260437',
+  },
+  {
+    name: 'Bolso piel napa trenzado',
+    price: '149,00 €',
+    image:
+      'https://static.massimodutti.net/assets/public/72a7/b8c4/f4e0470d99fd/e6ef989b6f73/06949607700-o1/06949607700-o1.jpg?ts=1780051330054',
+  },
+  {
+    name: 'Falda pareo detalle encaje 100% seda',
+    price: '99,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/3ded/f6cd/fa2e4ae99767/50f1f5f4ebaa/05291509717-o1/05291509717-o1.jpg?ts=1781620551660',
+  },
+  {
+    name: 'Falda midi fluida detalle encaje',
+    price: '69,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/aff1/2bd5/0e2b438b91e4/2b5d27787ba0/05208509250-o1/05208509250-o1.jpg?ts=1778597493499',
+  },
+  {
+    name: 'Falda midi fluida bolsillos satinada',
+    price: '79,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/e83c/46ca/cbd0404e8529/1dfe4d1711f6/05221510400-o1/05221510400-o1.jpg?ts=1781173096509',
+  },
+  {
+    name: 'Falda midi recta 100% seda',
+    price: '89,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/398d/6362/aa8d43d5b751/69dc9472a11f/05260508829-o1/05260508829-o1.jpg?ts=1777391481713',
+  },
+  {
+    name: 'Falda fluida satinada',
+    price: '69,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/7458/1d77/94e04f6ba746/90ce9cf24baa/05216509700-o1/05216509700-o1.jpg?ts=1781703930647',
+  },
+  {
+    name: 'Falda fluida balloon',
+    price: '59,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/20b0/35ad/02404335b743/31ed75901337/05211202800-o1/05211202800-o1.jpg?ts=1780924254869',
+  },
+  {
+    name: 'Falda midi goma 100% lino',
+    price: '69,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/f2fa/7666/6ec9497eb138/124b6e259b59/05233747600-o1/05233747600-o1.jpg?ts=1779873615265',
+  },
+  {
+    name: 'Vestido midi tirantes mezcla algodón',
+    price: '79,95 €',
+    image:
+      'https://static.massimodutti.net/assets/public/68d4/7527/254d4ebfb714/0eb1e166e263/06648509700-o1/06648509700-o1.jpg?ts=1781796610883',
+  },
+]
 
 const HERO_WHEEL_TO_HORIZONTAL_RATIO = 2
 const HERO_LERP_FACTOR = 0.4
@@ -55,9 +119,9 @@ function OptimizedImage({
 }
 
 function App() {
-  const recommendationSlots = Array.from({ length: 18 })
   const [isHeaderSolid, setIsHeaderSolid] = useState(false)
   const heroTrackRef = useRef<HTMLDivElement>(null)
+  const shopLookSectionRef = useRef<HTMLElement>(null)
   const isDraggingRef = useRef(false)
   const dragStartXRef = useRef(0)
   const dragStartScrollLeftRef = useRef(0)
@@ -153,6 +217,20 @@ function App() {
     if (heroTrackRef.current.hasPointerCapture(event.pointerId)) {
       heroTrackRef.current.releasePointerCapture(event.pointerId)
     }
+  }
+
+  const onViewLookClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
+
+    if (!shopLookSectionRef.current) {
+      return
+    }
+
+    const topOffset = isHeaderSolid ? 72 : 24
+    const targetY =
+      shopLookSectionRef.current.getBoundingClientRect().top + window.scrollY - topOffset
+
+    window.scrollTo({ top: targetY, behavior: 'smooth' })
   }
 
   useEffect(() => {
@@ -268,7 +346,7 @@ function App() {
               Mujer
             </a>
             <a href="#">Hombre</a>
-            <a href="#">MD World</a>
+            <a href="#">Massimo Dutti World</a>
           </nav>
 
           <a href="#" className="logo" aria-label="Massimo Dutti">
@@ -294,7 +372,7 @@ function App() {
         >
           <article className="hero-slide hero-slide--left" data-node-id="15401:5342">
             <OptimizedImage
-              className="hero-slide__media"
+              className="hero-slide__media hero-slide__media--left"
               src={imgHeroLeft}
               alt="Modelo con vestido satinado beige"
               loading="eager"
@@ -315,7 +393,7 @@ function App() {
         <aside className="product-card" data-node-id="15401:5367">
           <div className="product-card__head">
             <span className="tag">Nuevo</span>
-            <a href="#">Ver look</a>
+            <a href="#shop-the-look" onClick={onViewLookClick}>Ver look</a>
           </div>
 
           <div className="product-card__title-row">
@@ -381,7 +459,15 @@ function App() {
         </div>
       </section>
 
-      <section className="editorial-band" aria-label="Shop the look" data-node-id="15632:2488">
+      <section
+        className="editorial-band"
+        id="shop-the-look"
+        ref={shopLookSectionRef}
+        aria-label="Shop the look"
+        data-node-id="15632:2488"
+      >
+        <h3 className="shop-look__title">look de 3 artículos</h3>
+
         <OptimizedImage
           src={imgEditorial}
           alt="Editorial moda en exterior"
@@ -389,8 +475,6 @@ function App() {
         />
 
         <div className="shop-look" data-node-id="15632:2490">
-          <h3 className="shop-look__title">Look de 3 artículos</h3>
-
           <div className="shop-look__row" data-node-id="15632:2492">
             <article className="shop-item" data-node-id="15632:2493">
               <OptimizedImage src={imgMiniDress} alt="Vestido satinado beige" className="shop-item__image" />
@@ -430,14 +514,27 @@ function App() {
         </div>
       </section>
 
+      <section className="recommendations-nav" aria-label="Navegación de recomendaciones" data-node-id="15671:2251">
+        <button type="button" className="recommendations-nav__button" data-node-id="15671:2252">
+          Anterior
+        </button>
+        <button type="button" className="recommendations-nav__button" data-node-id="15671:2253">
+          Siguiente
+        </button>
+      </section>
+
       <section className="recommendations" aria-label="También te puede interesar">
-        <h2>También puede interesarte</h2>
+        <h2>Te Puede Interesar</h2>
         <div className="recommendations-grid">
-          {recommendationSlots.map((_, index) => (
+          {recommendationProducts.map((product, index) => (
             <article key={index} className="placeholder-card" aria-label={`Recomendación ${index + 1}`}>
-              <div className="placeholder-image" />
-              <p className="placeholder-line">Camiseta de algodón</p>
-              <p className="placeholder-line">29,95 €</p>
+              <OptimizedImage
+                src={product.image}
+                alt={product.name}
+                className="recommendation-image"
+              />
+              <p className="placeholder-line recommendation-name">{product.name}</p>
+              <p className="placeholder-line recommendation-price">{product.price}</p>
             </article>
           ))}
         </div>
