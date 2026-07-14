@@ -712,3 +712,721 @@
     margin-top: var(--space-150);
   }
 }
+
+/* =====================================================================
+   Mobile prototype view — simulated iPhone frame + PDP mobile flow.
+   Centered on desktop (framed device), full-viewport on real handhelds.
+   ===================================================================== */
+
+.mobile-stage {
+  --app-frame-w: 393px;
+  --app-frame-h: 852px;
+  --app-header-h: 48px;
+  --app-status-h: 62px;
+  --app-sticky-h: 176px;
+  --app-sticky-h-compact: 96px;
+
+  align-items: center;
+  background: #ececec;
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  min-height: 100svh;
+  padding: var(--space-400);
+  width: 100%;
+}
+
+.app-frame {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-rows: var(--app-status-h) var(--app-header-h) 1fr;
+  height: min(var(--app-frame-h), calc(100svh - var(--space-400) * 2));
+  overflow: hidden;
+  position: relative;
+  width: min(var(--app-frame-w), 100%);
+}
+
+/* Real handheld viewport — drop the framed look, go edge-to-edge */
+@media (max-width: 500px) {
+  .mobile-stage {
+    background: var(--surface);
+    padding: 0;
+  }
+
+  .app-frame {
+    border: 0;
+    height: 100svh;
+    width: 100%;
+  }
+}
+
+/* ---- Status bar ---- */
+.app-status-bar {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  height: var(--app-status-h);
+  justify-content: space-between;
+  padding: 21px 24px 19px;
+}
+
+.app-status-bar__time {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 590;
+  letter-spacing: -0.2px;
+  line-height: 22px;
+}
+
+.app-status-bar__icons {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  gap: 7px;
+  height: 22px;
+}
+
+.app-status-bar__cellular {
+  display: block;
+  height: 12.226px;
+  width: 19.2px;
+}
+
+.app-status-bar__wifi {
+  display: block;
+  height: 12.328px;
+  width: 17.142px;
+}
+
+.app-status-bar__battery {
+  display: block;
+  height: 13px;
+  width: 27.328px;
+}
+
+/* ---- App header ---- */
+.app-header {
+  align-items: center;
+  display: flex;
+  height: var(--app-header-h);
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.app-header__actions {
+  align-items: center;
+  display: flex;
+  gap: var(--space-50);
+}
+
+.app-header__btn {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  padding: var(--space-100);
+}
+
+.app-header__btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.app-header__btn--bag {
+  align-items: center;
+  gap: 4px;
+  padding-right: 4px;
+}
+
+.app-header__icon {
+  display: block;
+  height: 16px;
+  width: 16px;
+  pointer-events: none;
+}
+
+.app-header__count {
+  color: var(--text);
+  font: 300 9px/1.5 var(--font-heading);
+  letter-spacing: 0.54px;
+}
+
+/* ---- Scroll body ---- */
+.app-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.app-scroll {
+  scrollbar-width: none;
+}
+
+.app-scroll__spacer {
+  height: var(--app-sticky-h);
+}
+
+/* ---- Hero carousel ---- */
+.app-hero {
+  height: 100%;
+  min-height: 100%;
+  position: relative;
+}
+
+.app-hero__carousel {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+}
+
+.app-hero__carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.app-hero__carousel.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.app-hero__slide {
+  flex: 0 0 100%;
+  height: 100%;
+  margin: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.app-hero__slide img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Dot indicators — subtle affordance for horizontal swipe */
+.app-hero__dots {
+  bottom: 12px;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  left: 0;
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+}
+
+.app-hero__dot {
+  background: rgba(255, 255, 255, 0.55);
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  height: 6px;
+  padding: 0;
+  transition: background-color 160ms ease, width 160ms ease;
+  width: 6px;
+}
+
+.app-hero__dot.is-active {
+  background: var(--text);
+  border-color: var(--text);
+  width: 18px;
+}
+
+.app-hero__dot:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- Detail (below hero) ---- */
+.app-detail {
+  border-top: 0.5px solid var(--border-subtle);
+  display: grid;
+  gap: var(--space-200);
+  padding: var(--space-300) 20px var(--space-200);
+}
+
+.app-detail__ref,
+.app-detail__desc {
+  color: var(--text);
+  font: 400 12px/1.5 var(--font-heading);
+  margin: 0;
+}
+
+.app-detail__ref {
+  color: var(--text-subtle);
+}
+
+.app-detail__links {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app-detail__links a {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  font: 400 12px/1.5 var(--font-heading);
+  justify-content: space-between;
+  min-height: 32px;
+  text-decoration: none;
+}
+
+.app-detail__links a::after {
+  content: '›';
+  font-size: 14px;
+}
+
+.app-detail__links a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- Gallery (2-col) ---- */
+.app-gallery {
+  display: grid;
+  gap: var(--space-100);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: var(--space-300) 20px;
+}
+
+.app-gallery img {
+  aspect-ratio: 3 / 4;
+  background: var(--surface-sunken);
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* ---- Editorial + shop-the-look ---- */
+.app-editorial {
+  display: grid;
+  gap: var(--space-300);
+  padding: var(--space-300) 0;
+}
+
+.app-editorial__title {
+  color: var(--text);
+  font: 400 13px/1.4 var(--font-heading);
+  margin: 0;
+  padding: 0 20px;
+  text-transform: capitalize;
+}
+
+.app-editorial__image {
+  aspect-ratio: 3 / 4;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.app-shop-look {
+  display: grid;
+  gap: var(--space-300);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0 20px;
+}
+
+.app-shop-item {
+  display: grid;
+  gap: var(--space-100);
+}
+
+.app-shop-item--wide {
+  grid-column: 1 / -1;
+  margin: 0 auto;
+  max-width: calc(50% - var(--space-150));
+  width: 100%;
+}
+
+.app-shop-item img {
+  aspect-ratio: 3 / 4;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.app-shop-item__meta {
+  align-items: center;
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  padding-top: 4px;
+  text-align: center;
+}
+
+.app-shop-item__meta p {
+  font: 400 12px/1.4 var(--font-heading);
+  margin: 0;
+}
+
+.app-shop-item__meta button {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  font: 400 18px/1 var(--font-body);
+  height: 32px;
+  padding: 0;
+  width: 32px;
+}
+
+.app-shop-item__meta button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- Recommendations ---- */
+.app-recs {
+  border-top: 0.5px solid var(--border-subtle);
+  padding: var(--space-300) 20px;
+}
+
+.app-recs h2 {
+  color: var(--text);
+  font: 400 13px/1.4 var(--font-heading);
+  margin: 0 0 var(--space-200);
+}
+
+.app-recs__grid {
+  display: grid;
+  gap: var(--space-300);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.app-recs__card {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+}
+
+.app-recs__card img {
+  aspect-ratio: 3 / 4;
+  background: var(--surface-sunken);
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.app-recs__name,
+.app-recs__price {
+  font: 400 12px/1.4 var(--font-heading);
+  margin: 0;
+  text-align: center;
+}
+
+.app-recs__name {
+  max-width: 90%;
+}
+
+/* ---- Footer ---- */
+.app-footer {
+  border-top: 0.5px solid var(--border-subtle);
+  display: grid;
+  gap: var(--space-400);
+  justify-items: center;
+  padding: var(--space-400) 20px;
+}
+
+.app-footer__links {
+  display: grid;
+  gap: var(--space-200);
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.app-footer__links a {
+  color: var(--text);
+  font: 400 12px/1.4 var(--font-heading);
+  text-decoration: none;
+}
+
+.app-footer__locale {
+  display: grid;
+  gap: var(--space-100);
+  justify-items: center;
+  text-align: center;
+}
+
+.app-footer__locale p {
+  color: var(--text);
+  font: 400 12px/1.4 var(--font-heading);
+  margin: 0;
+}
+
+.app-footer__market {
+  color: var(--text);
+  font: 400 12px/1.4 var(--font-heading);
+  text-decoration: underline;
+}
+
+.app-footer__langs {
+  display: flex;
+  gap: var(--space-200);
+  margin-top: var(--space-200);
+}
+
+.app-footer__langs a {
+  color: #737373;
+  font: 400 12px/1.4 var(--font-heading);
+  text-decoration: none;
+}
+
+.app-footer__langs .is-active {
+  color: var(--text);
+}
+
+.app-footer__brand img {
+  display: block;
+  height: auto;
+  width: 148px;
+}
+
+.app-footer a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---- Sticky bottom sheet ---- */
+.app-sticky {
+  background: var(--surface);
+  border: 0.5px solid #a9a9a9;
+  bottom: 20px;
+  display: grid;
+  gap: 12px;
+  left: 12px;
+  padding: 12px 20px 16px;
+  position: absolute;
+  right: 12px;
+  transition: gap 180ms ease;
+}
+
+.app-sticky__info {
+  display: grid;
+  gap: 4px;
+}
+
+.app-sticky__tag {
+  color: #737373;
+  font: 400 9px/14px var(--font-heading);
+  padding-top: 4px;
+  padding-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.app-sticky__row {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--space-100);
+  justify-content: space-between;
+}
+
+.app-sticky__title-group {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.app-sticky__title {
+  color: var(--text);
+  font: 400 13px/1.4 var(--font-heading);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.app-sticky__price {
+  color: var(--text);
+  font: 400 13px/1.4 var(--font-heading);
+  margin: 0;
+}
+
+.app-sticky__meta {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.app-sticky__icon-btn {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  padding: 8px;
+  width: 32px;
+}
+
+.app-sticky__icon-btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.app-sticky__swatch {
+  background: var(--accent-sand);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9999px;
+  cursor: pointer;
+  height: 16px;
+  margin: 8px;
+  padding: 0;
+  position: relative;
+  width: 16px;
+}
+
+.app-sticky__swatch.is-selected::after {
+  background: var(--text);
+  content: '';
+  height: 1px;
+  left: 50%;
+  position: absolute;
+  top: calc(100% + 3px);
+  transform: translateX(-50%);
+  width: 12px;
+}
+
+.app-sticky__swatch:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.app-sticky__cta {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font: 400 12px/1 var(--font-heading);
+  height: 32px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.app-sticky__cta:hover {
+  background: var(--surface-sunken);
+}
+
+.app-sticky__cta:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Compact sticky — when scrolled past hero, tighter footprint */
+.app-sticky.is-compact {
+  padding-top: 10px;
+  padding-bottom: 12px;
+}
+
+.app-sticky__compact {
+  align-items: center;
+  display: flex;
+  gap: var(--space-100);
+  justify-content: space-between;
+}
+
+.app-sticky__compact-info {
+  display: flex;
+  flex: 1 1 auto;
+  gap: var(--space-100);
+  min-width: 0;
+}
+
+.app-sticky__compact-info .app-sticky__title,
+.app-sticky__compact-info .app-sticky__price {
+  font-size: 12px;
+}
+
+.app-home-indicator {
+  background: var(--text);
+  border-radius: 3px;
+  bottom: 6px;
+  height: 4px;
+  left: 50%;
+  opacity: 0.9;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 134px;
+}
+
+/* On real handhelds, hide the fake home indicator (the phone has its own) */
+@media (max-width: 500px) {
+  .app-home-indicator {
+    display: none;
+  }
+}
+
+/* =====================================================================
+   Device switcher — discreet toggle to swap between prototype views.
+   ===================================================================== */
+
+.device-switcher {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  bottom: 16px;
+  display: inline-flex;
+  gap: 0;
+  padding: 2px;
+  position: fixed;
+  right: 16px;
+  z-index: 999;
+}
+
+.device-switcher__btn {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  font: 400 9px/1 var(--font-heading);
+  letter-spacing: 0.54px;
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.device-switcher__btn.is-active {
+  background: var(--text);
+  color: var(--surface);
+}
+
+.device-switcher__btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Lock the page when in app mode so the framed device stays put */
+html[data-device-mode='app'],
+html[data-device-mode='app'] body {
+  height: 100%;
+  overflow: hidden;
+}
