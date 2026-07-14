@@ -1,4 +1,4 @@
-import { type PointerEvent, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { OptimizedImage } from './OptimizedImage'
 import {
@@ -7,30 +7,13 @@ import {
   imgGalleryDress,
   imgGalleryModel,
   imgHeroLeft,
-  imgLowerHero,
   imgMiniDress,
   imgMiniNecklace,
   imgMiniShoe,
   recommendationProducts,
 } from './data'
 
-const heroSlides = [
-  {
-    src: imgHeroLeft,
-    alt: 'Modelo con vestido satinado beige',
-    objectPosition: 'center 30%',
-  },
-  {
-    src: imgLowerHero,
-    alt: 'Vestido satinado, plano completo',
-    objectPosition: 'center center',
-  },
-  {
-    src: imgGalleryDress,
-    alt: 'Vestido beige sobre fondo gris',
-    objectPosition: 'center center',
-  },
-]
+const imgHero2 = '/image-2-v.jpg'
 
 function IconArrowLeft() {
   return <img src="/back-arrow.svg" alt="" className="app-header__icon" aria-hidden="true" />
@@ -69,29 +52,31 @@ function StatusBarBattery() {
 }
 
 export function MobileView() {
-  const heroCarouselRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const [showCompactSticky, setShowCompactSticky] = useState(false)
+  const [isStickyHidden, setIsStickyHidden] = useState(false)
+  const [isHeaderSolid, setIsHeaderSolid] = useState(false)
 
-  // Pointer drag support on the horizontal carousel (for mouse users viewing app mode)
-  const isDraggingRef = useRef(false)
-  const dragStartXRef = useRef(0)
-  const dragStartScrollRef = useRef(0)
-
-  // Compact the sticky when the user scrolls past the hero — better use of vertical space
+  // Scroll-driven UI states: fade the sticky at the very end and give the header a solid
+  // background once the user has scrolled past both full-viewport hero images.
   useEffect(() => {
     const scroller = scrollAreaRef.current
     if (!scroller) return
+
+    const FADE_THRESHOLD_PX = 80
 
     let raf: number | null = null
     const onScroll = () => {
       if (raf !== null) return
       raf = requestAnimationFrame(() => {
         raf = null
-        // Compact after ~40% of first viewport scroll
-        setShowCompactSticky(scroller.scrollTop > 240)
+        const { scrollTop, scrollHeight, clientHeight } = scroller
+        const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+        setIsStickyHidden(distanceFromBottom <= FADE_THRESHOLD_PX)
+        // Hero occupies ~2 viewport heights (two stacked full-bleed images).
+        setIsHeaderSolid(scrollTop > clientHeight * 2 - 48)
       })
     }
+    onScroll()
     scroller.addEventListener('scroll', onScroll, { passive: true })
     return () => {
       scroller.removeEventListener('scroll', onScroll)
@@ -99,98 +84,29 @@ export function MobileView() {
     }
   }, [])
 
-  const onCarouselPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse') return
-    const el = heroCarouselRef.current
-    if (!el) return
-    isDraggingRef.current = true
-    dragStartXRef.current = event.clientX
-    dragStartScrollRef.current = el.scrollLeft
-    el.classList.add('is-dragging')
-    el.setPointerCapture(event.pointerId)
-  }
-
-  const onCarouselPointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current) return
-    const el = heroCarouselRef.current
-    if (!el) return
-    const deltaX = event.clientX - dragStartXRef.current
-    el.scrollLeft = dragStartScrollRef.current - deltaX
-  }
-
-  const onCarouselPointerEnd = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current) return
-    const el = heroCarouselRef.current
-    if (!el) return
-    isDraggingRef.current = false
-    el.classList.remove('is-dragging')
-
-    // Snap to nearest slide
-    const w = el.clientWidth
-    if (w > 0) {
-      const nearest = Math.round(el.scrollLeft / w)
-      el.scrollTo({ left: nearest * w, behavior: 'smooth' })
-    }
-    if (el.hasPointerCapture(event.pointerId)) {
-      el.releasePointerCapture(event.pointerId)
-    }
-  }
-
   return (
     <div className="mobile-stage">
       <div className="app-frame" role="region" aria-label="Prototipo app Massimo Dutti">
-        <div className="app-status-bar" aria-hidden="true">
-          <span className="app-status-bar__time">9:41</span>
-          <div className="app-status-bar__icons">
-            <StatusBarSignal />
-            <StatusBarWifi />
-            <StatusBarBattery />
-          </div>
-        </div>
-
-        <header className="app-header">
-          <button type="button" className="app-header__btn" aria-label="Volver">
-            <IconArrowLeft />
-          </button>
-          <div className="app-header__actions">
-            <button type="button" className="app-header__btn" aria-label="Compartir">
-              <IconShare />
-            </button>
-            <button type="button" className="app-header__btn" aria-label="Buscar">
-              <IconSearch />
-            </button>
-            <button type="button" className="app-header__btn app-header__btn--bag" aria-label="Cesta, 0 artículos">
-              <IconBag />
-              <span className="app-header__count">00</span>
-            </button>
-          </div>
-        </header>
-
         <div className="app-scroll" ref={scrollAreaRef}>
           <section className="app-hero" aria-label="Imágenes del producto">
-            <div
-              className="app-hero__carousel"
-              ref={heroCarouselRef}
-              onPointerDown={onCarouselPointerDown}
-              onPointerMove={onCarouselPointerMove}
-              onPointerUp={onCarouselPointerEnd}
-              onPointerCancel={onCarouselPointerEnd}
-            >
-              {heroSlides.map((slide, i) => (
-                <figure className="app-hero__slide" key={i}>
-                  <OptimizedImage
-                    src={slide.src}
-                    alt={slide.alt}
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                    fetchPriority={i === 0 ? 'high' : 'low'}
-                    style={{ objectPosition: slide.objectPosition }}
-                  />
-                </figure>
-              ))}
-            </div>
-          </section>
-
-          <section className="app-detail" aria-label="Descripción del producto">
+            <figure className="app-hero__slot">
+              <OptimizedImage
+                src={imgHeroLeft}
+                alt="Modelo con vestido satinado beige"
+                loading="eager"
+                fetchPriority="high"
+                style={{ objectPosition: 'center 30%' }}
+              />
+            </figure>
+            <figure className="app-hero__slot">
+              <OptimizedImage
+                src={imgHero2}
+                alt="Modelo con vestido en paisaje desértico"
+                loading="eager"
+                fetchPriority="low"
+              />
+            </figure>
+          </section>          <section className="app-detail" aria-label="Descripción del producto">
             <p className="app-detail__ref">Ref. 5102/703</p>
             <p className="app-detail__desc">
               Americana confeccionada en tejido 100% lino. Cuello con solapa de
@@ -217,7 +133,6 @@ export function MobileView() {
             <OptimizedImage src={imgGalleryDress} alt="Vestido beige sobre fondo gris" />
             <OptimizedImage src={imgGalleryModel} alt="Vista posterior del vestido" />
             <OptimizedImage src={imgGalleryDetail} alt="Detalle de tejido del vestido" />
-            <OptimizedImage src={imgLowerHero} alt="Vestido satinado de cuerpo completo" />
           </section>
 
           <section className="app-editorial" aria-label="Shop the look">
@@ -233,7 +148,9 @@ export function MobileView() {
                 <div className="app-shop-item__meta">
                   <p>Camiseta Medium Weight</p>
                   <p>29,95 €</p>
-                  <button type="button" aria-label="Añadir vestido satinado al look">+</button>
+                  <button type="button" aria-label="Añadir vestido satinado al look">
+                    <img src="/plus.svg" alt="" aria-hidden="true" />
+                  </button>
                 </div>
               </article>
               <article className="app-shop-item">
@@ -241,7 +158,9 @@ export function MobileView() {
                 <div className="app-shop-item__meta">
                   <p>Camiseta Medium Weight</p>
                   <p>29,95 €</p>
-                  <button type="button" aria-label="Añadir collar al look">+</button>
+                  <button type="button" aria-label="Añadir collar al look">
+                    <img src="/plus.svg" alt="" aria-hidden="true" />
+                  </button>
                 </div>
               </article>
               <article className="app-shop-item app-shop-item--wide">
@@ -249,7 +168,9 @@ export function MobileView() {
                 <div className="app-shop-item__meta">
                   <p>Camiseta Medium Weight</p>
                   <p>29,95 €</p>
-                  <button type="button" aria-label="Añadir zapato al look">+</button>
+                  <button type="button" aria-label="Añadir zapato al look">
+                    <img src="/plus.svg" alt="" aria-hidden="true" />
+                  </button>
                 </div>
               </article>
             </div>
@@ -268,71 +189,61 @@ export function MobileView() {
             </div>
           </section>
 
-          <footer className="app-footer" aria-label="Footer">
-            <nav className="app-footer__links" aria-label="Enlaces del footer">
-              <a href="#">App Massimo Dutti</a>
-              <a href="#">Social</a>
-              <a href="#">Ayuda</a>
-              <a href="#">Servicios</a>
-              <a href="#">Empresa</a>
-              <a href="#">Legal</a>
-            </nav>
-            <div className="app-footer__locale">
-              <p>Cambiar de mercado:</p>
-              <a href="#" className="app-footer__market">España (€)</a>
-              <div className="app-footer__langs" aria-label="Idiomas">
-                <a href="#" className="is-active" aria-current="true">Es</a>
-                <a href="#">Cat</a>
-                <a href="#">Ga</a>
-                <a href="#">Eus</a>
-                <a href="#">En</a>
-              </div>
-            </div>
-            <a href="#" className="app-footer__brand" aria-label="Massimo Dutti">
-              <img src="/md-logo.svg" alt="Massimo Dutti" />
-            </a>
-          </footer>
-
           <div className="app-scroll__spacer" aria-hidden="true" />
         </div>
 
+        <div className="app-status-bar" aria-hidden="true">
+          <span className="app-status-bar__time">9:41</span>
+          <div className="app-status-bar__icons">
+            <StatusBarSignal />
+            <StatusBarWifi />
+            <StatusBarBattery />
+          </div>
+        </div>
+
+        <header className={`app-header ${isHeaderSolid ? 'is-solid' : ''}`}>
+          <button type="button" className="app-header__btn" aria-label="Volver">
+            <IconArrowLeft />
+          </button>
+          <div className="app-header__actions">
+            <button type="button" className="app-header__btn" aria-label="Compartir">
+              <IconShare />
+            </button>
+            <button type="button" className="app-header__btn" aria-label="Buscar">
+              <IconSearch />
+            </button>
+            <button type="button" className="app-header__btn app-header__btn--bag" aria-label="Cesta, 0 artículos">
+              <IconBag />
+              <span className="app-header__count">00</span>
+            </button>
+          </div>
+        </header>
+
         <aside
-          className={`app-sticky ${showCompactSticky ? 'is-compact' : ''}`}
+          className={`app-sticky ${isStickyHidden ? 'is-hidden' : ''}`}
           aria-label="Información del producto"
+          aria-hidden={isStickyHidden}
         >
-          {!showCompactSticky && (
-            <div className="app-sticky__info">
-              <span className="app-sticky__tag">Nuevo</span>
-              <div className="app-sticky__row">
-                <div className="app-sticky__title-group">
-                  <p className="app-sticky__title">Vestido midi fluido satinado</p>
-                  <p className="app-sticky__price">149 €</p>
-                </div>
-                <div className="app-sticky__meta">
-                  <button type="button" className="app-sticky__icon-btn" aria-label="Guardar producto">
-                    <IconBookmark />
-                  </button>
-                  <button
-                    type="button"
-                    className="app-sticky__swatch is-selected"
-                    aria-label="Color beige seleccionado"
-                    aria-pressed="true"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          {showCompactSticky && (
-            <div className="app-sticky__compact">
-              <div className="app-sticky__compact-info">
+          <div className="app-sticky__info">
+            <span className="app-sticky__tag">Nuevo</span>
+            <div className="app-sticky__row">
+              <div className="app-sticky__title-group">
                 <p className="app-sticky__title">Vestido midi fluido satinado</p>
                 <p className="app-sticky__price">149 €</p>
               </div>
-              <button type="button" className="app-sticky__icon-btn" aria-label="Guardar producto">
-                <IconBookmark />
-              </button>
+              <div className="app-sticky__meta">
+                <button type="button" className="app-sticky__icon-btn" aria-label="Guardar producto">
+                  <IconBookmark />
+                </button>
+                <button
+                  type="button"
+                  className="app-sticky__swatch is-selected"
+                  aria-label="Color beige seleccionado"
+                  aria-pressed="true"
+                />
+              </div>
             </div>
-          )}
+          </div>
           <button type="button" className="app-sticky__cta">
             Elige una talla
           </button>

@@ -425,11 +425,17 @@
   color: var(--text);
   cursor: pointer;
   display: inline-flex;
-  font: 400 18px/1 var(--font-body);
   height: 32px;
   justify-content: center;
   padding: 0;
   width: 32px;
+}
+
+.shop-item__plus img {
+  display: block;
+  height: 16px;
+  width: 16px;
+  pointer-events: none;
 }
 
 .recommendations-nav {
@@ -739,8 +745,6 @@
 .app-frame {
   background: var(--surface);
   border: 1px solid var(--border);
-  display: grid;
-  grid-template-rows: var(--app-status-h) var(--app-header-h) 1fr;
   height: min(var(--app-frame-h), calc(100svh - var(--space-400) * 2));
   overflow: hidden;
   position: relative;
@@ -768,7 +772,13 @@
   display: flex;
   height: var(--app-status-h);
   justify-content: space-between;
+  left: 0;
   padding: 21px 24px 19px;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 12;
 }
 
 .app-status-bar__time {
@@ -808,10 +818,21 @@
 /* ---- App header ---- */
 .app-header {
   align-items: center;
+  background: transparent;
   display: flex;
   height: var(--app-header-h);
   justify-content: space-between;
+  left: 0;
   padding: 0 12px;
+  position: absolute;
+  right: 0;
+  top: var(--app-status-h);
+  transition: background-color 200ms ease;
+  z-index: 11;
+}
+
+.app-header.is-solid {
+  background: var(--surface);
 }
 
 .app-header__actions {
@@ -858,6 +879,7 @@
 
 /* ---- Scroll body ---- */
 .app-scroll {
+  height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
@@ -877,84 +899,24 @@
   height: var(--app-sticky-h);
 }
 
-/* ---- Hero carousel ---- */
+/* ---- Hero (stacked vertical slots) ---- */
 .app-hero {
-  height: 100%;
-  min-height: 100%;
-  position: relative;
+  display: block;
 }
 
-.app-hero__carousel {
-  display: flex;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  touch-action: pan-x pan-y;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  cursor: grab;
-}
-
-.app-hero__carousel::-webkit-scrollbar {
-  display: none;
-}
-
-.app-hero__carousel.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-  scroll-behavior: auto;
-}
-
-.app-hero__slide {
-  flex: 0 0 100%;
+.app-hero__slot {
+  display: block;
   height: 100%;
   margin: 0;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  overflow: hidden;
+  width: 100%;
 }
 
-.app-hero__slide img {
+.app-hero__slot img {
   display: block;
   height: 100%;
   object-fit: cover;
   width: 100%;
-  pointer-events: none;
-}
-
-/* Dot indicators — subtle affordance for horizontal swipe */
-.app-hero__dots {
-  bottom: 12px;
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  left: 0;
-  pointer-events: auto;
-  position: absolute;
-  right: 0;
-}
-
-.app-hero__dot {
-  background: rgba(255, 255, 255, 0.55);
-  border: 0.5px solid rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  height: 6px;
-  padding: 0;
-  transition: background-color 160ms ease, width 160ms ease;
-  width: 6px;
-}
-
-.app-hero__dot.is-active {
-  background: var(--text);
-  border-color: var(--text);
-  width: 18px;
-}
-
-.app-hero__dot:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
 }
 
 /* ---- Detail (below hero) ---- */
@@ -1084,14 +1046,23 @@
 }
 
 .app-shop-item__meta button {
+  align-items: center;
   background: transparent;
   border: 0;
   color: var(--text);
   cursor: pointer;
-  font: 400 18px/1 var(--font-body);
+  display: inline-flex;
   height: 32px;
+  justify-content: center;
   padding: 0;
   width: 32px;
+}
+
+.app-shop-item__meta button img {
+  display: block;
+  height: 16px;
+  width: 16px;
+  pointer-events: none;
 }
 
 .app-shop-item__meta button:focus-visible {
@@ -1219,10 +1190,19 @@
   display: grid;
   gap: 12px;
   left: 12px;
+  opacity: 1;
   padding: 12px 20px 16px;
+  pointer-events: auto;
   position: absolute;
   right: 12px;
-  transition: gap 180ms ease;
+  transform: translateY(0);
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+
+.app-sticky.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
 }
 
 .app-sticky__info {
@@ -1340,31 +1320,6 @@
 .app-sticky__cta:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-}
-
-/* Compact sticky — when scrolled past hero, tighter footprint */
-.app-sticky.is-compact {
-  padding-top: 10px;
-  padding-bottom: 12px;
-}
-
-.app-sticky__compact {
-  align-items: center;
-  display: flex;
-  gap: var(--space-100);
-  justify-content: space-between;
-}
-
-.app-sticky__compact-info {
-  display: flex;
-  flex: 1 1 auto;
-  gap: var(--space-100);
-  min-width: 0;
-}
-
-.app-sticky__compact-info .app-sticky__title,
-.app-sticky__compact-info .app-sticky__price {
-  font-size: 12px;
 }
 
 .app-home-indicator {

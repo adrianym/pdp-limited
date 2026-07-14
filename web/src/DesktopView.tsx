@@ -383,7 +383,7 @@ export function DesktopView() {
                 <p>Camiseta Medium Weight</p>
                 <p>29,95 €</p>
                 <button type="button" className="shop-item__plus" aria-label="Añadir vestido satinado al look">
-                  +
+                  <img src="/plus.svg" alt="" aria-hidden="true" />
                 </button>
               </div>
             </article>
@@ -394,7 +394,7 @@ export function DesktopView() {
                 <p>Camiseta Medium Weight</p>
                 <p>29,95 €</p>
                 <button type="button" className="shop-item__plus" aria-label="Añadir collar al look">
-                  +
+                  <img src="/plus.svg" alt="" aria-hidden="true" />
                 </button>
               </div>
             </article>
@@ -407,7 +407,7 @@ export function DesktopView() {
                 <p>Camiseta Medium Weight</p>
                 <p>29,95 €</p>
                 <button type="button" className="shop-item__plus" aria-label="Añadir zapato al look">
-                  +
+                  <img src="/plus.svg" alt="" aria-hidden="true" />
                 </button>
               </div>
             </article>
