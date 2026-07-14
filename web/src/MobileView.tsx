@@ -13,7 +13,7 @@ import {
   recommendationProducts,
 } from './data'
 
-const imgHero2 = '/image-2-v.jpg'
+const imgHero2 = '/image-2-h.jpg'
 
 function IconArrowLeft() {
   return <img src="/back-arrow.svg" alt="" className="app-header__icon" aria-hidden="true" />
@@ -54,7 +54,7 @@ function StatusBarBattery() {
 export function MobileView() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const [isStickyHidden, setIsStickyHidden] = useState(false)
-  const [isHeaderSolid, setIsHeaderSolid] = useState(false)
+  const [isHeaderSolid, setIsHeaderSolid] = useState(true)
 
   // Scroll-driven UI states: fade the sticky at the very end and give the header a solid
   // background once the user has scrolled past both full-viewport hero images.
@@ -72,8 +72,9 @@ export function MobileView() {
         const { scrollTop, scrollHeight, clientHeight } = scroller
         const distanceFromBottom = scrollHeight - scrollTop - clientHeight
         setIsStickyHidden(distanceFromBottom <= FADE_THRESHOLD_PX)
-        // Hero occupies ~2 viewport heights (two stacked full-bleed images).
-        setIsHeaderSolid(scrollTop > clientHeight * 2 - 48)
+        // Header is solid white at the very top of the scroll; once the user starts
+        // scrolling, it becomes transparent so the imagery passes behind it.
+        setIsHeaderSolid(scrollTop <= 2)
       })
     }
     onScroll()
@@ -98,7 +99,7 @@ export function MobileView() {
                 style={{ objectPosition: 'center 30%' }}
               />
             </figure>
-            <figure className="app-hero__slot">
+            <figure className="app-hero__slot app-hero__slot--fit">
               <OptimizedImage
                 src={imgHero2}
                 alt="Modelo con vestido en paisaje desértico"
@@ -192,7 +193,7 @@ export function MobileView() {
           <div className="app-scroll__spacer" aria-hidden="true" />
         </div>
 
-        <div className="app-status-bar" aria-hidden="true">
+        <div className={`app-status-bar ${isHeaderSolid ? 'is-solid' : ''}`} aria-hidden="true">
           <span className="app-status-bar__time">9:41</span>
           <div className="app-status-bar__icons">
             <StatusBarSignal />

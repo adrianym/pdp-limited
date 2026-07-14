@@ -768,6 +768,7 @@
 /* ---- Status bar ---- */
 .app-status-bar {
   align-items: center;
+  background: transparent;
   color: var(--text);
   display: flex;
   height: var(--app-status-h);
@@ -778,7 +779,12 @@
   position: absolute;
   right: 0;
   top: 0;
+  transition: background-color 200ms ease;
   z-index: 12;
+}
+
+.app-status-bar.is-solid {
+  background: var(--surface);
 }
 
 .app-status-bar__time {
@@ -902,6 +908,7 @@
 /* ---- Hero (stacked vertical slots) ---- */
 .app-hero {
   display: block;
+  padding-top: calc(var(--app-status-h) + var(--app-header-h));
 }
 
 .app-hero__slot {
@@ -912,11 +919,19 @@
   width: 100%;
 }
 
+.app-hero__slot--fit {
+  height: auto;
+}
+
 .app-hero__slot img {
   display: block;
   height: 100%;
   object-fit: cover;
   width: 100%;
+}
+
+.app-hero__slot--fit img {
+  height: auto;
 }
 
 /* ---- Detail (below hero) ---- */
