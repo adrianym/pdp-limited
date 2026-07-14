@@ -71,35 +71,12 @@ function StatusBarBattery() {
 export function MobileView() {
   const heroCarouselRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  const [activeSlide, setActiveSlide] = useState(0)
   const [showCompactSticky, setShowCompactSticky] = useState(false)
 
   // Pointer drag support on the horizontal carousel (for mouse users viewing app mode)
   const isDraggingRef = useRef(false)
   const dragStartXRef = useRef(0)
   const dragStartScrollRef = useRef(0)
-
-  useEffect(() => {
-    const carousel = heroCarouselRef.current
-    if (!carousel) return
-
-    let raf: number | null = null
-    const onScroll = () => {
-      if (raf !== null) return
-      raf = requestAnimationFrame(() => {
-        raf = null
-        const w = carousel.clientWidth
-        if (w <= 0) return
-        const index = Math.round(carousel.scrollLeft / w)
-        setActiveSlide(index)
-      })
-    }
-    carousel.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      carousel.removeEventListener('scroll', onScroll)
-      if (raf !== null) cancelAnimationFrame(raf)
-    }
-  }, [])
 
   // Compact the sticky when the user scrolls past the hero — better use of vertical space
   useEffect(() => {
@@ -157,12 +134,6 @@ export function MobileView() {
     if (el.hasPointerCapture(event.pointerId)) {
       el.releasePointerCapture(event.pointerId)
     }
-  }
-
-  const goToSlide = (index: number) => {
-    const el = heroCarouselRef.current
-    if (!el) return
-    el.scrollTo({ left: index * el.clientWidth, behavior: 'smooth' })
   }
 
   return (
