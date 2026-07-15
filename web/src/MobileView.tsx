@@ -159,8 +159,8 @@ export function MobileView() {
                     <OptimizedImage
                       src={slide.src}
                       alt={slide.alt}
-                      loading={i === 0 ? 'eager' : 'lazy'}
-                      fetchPriority={i === 0 ? 'high' : 'low'}
+                      loading="eager"
+                      fetchPriority={i === 0 ? 'high' : 'auto'}
                       style={{ objectPosition: slide.objectPosition }}
                     />
                   </figure>

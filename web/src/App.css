@@ -940,6 +940,7 @@
 }
 
 .app-hero__slide--wide {
+  aspect-ratio: 1619 / 1080;
   flex: 0 0 auto;
   width: auto;
 }
@@ -955,7 +956,7 @@
 .app-hero__slide--wide img {
   height: 100%;
   object-fit: cover;
-  width: auto;
+  width: 100%;
 }
 
 /* ---- Detail (below hero) ---- */
