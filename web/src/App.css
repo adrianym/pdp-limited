@@ -728,7 +728,7 @@
   --app-frame-w: 393px;
   --app-frame-h: 852px;
   --app-header-h: 48px;
-  --app-status-h: 62px;
+  --app-status-h: 0px;
   --app-sticky-h: 176px;
   --app-sticky-h-compact: 96px;
 
@@ -905,41 +905,29 @@
   height: var(--app-sticky-h);
 }
 
-/* ---- Hero (horizontal wheel-locked carousel) ---- */
+/* ---- Hero (scroll-jacked horizontal carousel) ---- */
 .app-hero {
-  box-sizing: border-box;
   display: block;
-  height: 100%;
-  min-height: 100%;
-  padding-top: calc(var(--app-status-h) + var(--app-header-h));
+  /* Height is set by JS to (viewportH + maxTranslate) so the sticky stage
+     stays pinned for exactly the horizontal distance the track has to
+     travel. */
   position: relative;
 }
 
+.app-hero__stage {
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-top: var(--app-header-h);
+  position: sticky;
+  top: 0;
+  /* Height is set by JS to the scroller's clientHeight. */
+  width: 100%;
+}
+
 .app-hero__track {
-  cursor: grab;
   display: flex;
   height: 100%;
-  min-height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.app-hero__track::-webkit-scrollbar {
-  display: none;
-}
-
-.app-hero__track.is-dragging {
-  cursor: grabbing;
-}
-
-.app-hero__track.is-dragging a,
-.app-hero__track.is-dragging button {
-  pointer-events: none;
+  will-change: transform;
 }
 
 .app-hero__slide {
