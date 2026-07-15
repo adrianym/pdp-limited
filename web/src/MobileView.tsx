@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { type PointerEvent, useEffect, useRef, useState } from 'react'
 
 import { OptimizedImage } from './OptimizedImage'
 import {
@@ -14,6 +14,25 @@ import {
 } from './data'
 
 const imgHero2 = '/image-2-h.jpg'
+
+const HERO_WHEEL_TO_HORIZONTAL_RATIO = 2
+const HERO_LERP_FACTOR = 0.4
+const HERO_MAX_LERP_STEP_PX = 72
+
+const heroSlides = [
+  {
+    src: imgHeroLeft,
+    alt: 'Modelo con vestido satinado beige',
+    objectPosition: 'center 30%',
+    wide: false,
+  },
+  {
+    src: imgHero2,
+    alt: 'Modelo con vestido en paisaje desértico',
+    objectPosition: 'center center',
+    wide: true,
+  },
+]
 
 function IconArrowLeft() {
   return <img src="/back-arrow.svg" alt="" className="app-header__icon" aria-hidden="true" />
@@ -53,11 +72,17 @@ function StatusBarBattery() {
 
 export function MobileView() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const heroTrackRef = useRef<HTMLDivElement>(null)
   const [isStickyHidden, setIsStickyHidden] = useState(false)
-  const [isHeaderSolid, setIsHeaderSolid] = useState(true)
 
-  // Scroll-driven UI states: fade the sticky at the very end and give the header a solid
-  // background once the user has scrolled past both full-viewport hero images.
+  const isDraggingRef = useRef(false)
+  const dragStartXRef = useRef(0)
+  const dragStartScrollLeftRef = useRef(0)
+  const heroHorizontalTargetRef = useRef(0)
+  const heroHorizontalRafRef = useRef<number | null>(null)
+  const hasCompletedHeroHorizontalRef = useRef(false)
+
+  // Fade the sticky product module out just before the bottom of the scroll.
   useEffect(() => {
     const scroller = scrollAreaRef.current
     if (!scroller) return
@@ -72,9 +97,6 @@ export function MobileView() {
         const { scrollTop, scrollHeight, clientHeight } = scroller
         const distanceFromBottom = scrollHeight - scrollTop - clientHeight
         setIsStickyHidden(distanceFromBottom <= FADE_THRESHOLD_PX)
-        // Header is solid white at the very top of the scroll; once the user starts
-        // scrolling, it becomes transparent so the imagery passes behind it.
-        setIsHeaderSolid(scrollTop <= 2)
       })
     }
     onScroll()
@@ -85,28 +107,177 @@ export function MobileView() {
     }
   }, [])
 
+  // Wheel-locked horizontal hero: while the app-scroll is at the top, translate
+  // vertical wheel deltas into horizontal scroll on the hero track until it reaches
+  // the end; then release the lock so subsequent wheel deltas scroll the page.
+  useEffect(() => {
+    const scroller = scrollAreaRef.current
+    const track = heroTrackRef.current
+    if (!scroller || !track) return
+
+    const normalizeWheelDeltaY = (event: WheelEvent) => {
+      if (event.deltaMode === 1) return event.deltaY * 16
+      if (event.deltaMode === 2) return event.deltaY * scroller.clientHeight
+      return event.deltaY
+    }
+
+    const animateHeroTrack = () => {
+      const delta = heroHorizontalTargetRef.current - track.scrollLeft
+      if (Math.abs(delta) < 0.5) {
+        track.scrollLeft = heroHorizontalTargetRef.current
+        heroHorizontalRafRef.current = null
+        const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0)
+        hasCompletedHeroHorizontalRef.current = track.scrollLeft >= maxScroll - 1
+        return
+      }
+      const step =
+        Math.sign(delta) *
+        Math.min(Math.abs(delta * HERO_LERP_FACTOR), HERO_MAX_LERP_STEP_PX)
+      track.scrollLeft += step
+      heroHorizontalRafRef.current = requestAnimationFrame(animateHeroTrack)
+    }
+
+    const startHeroAnimation = () => {
+      if (heroHorizontalRafRef.current !== null) return
+      heroHorizontalRafRef.current = requestAnimationFrame(animateHeroTrack)
+    }
+
+    const resetTrackPosition = () => {
+      track.scrollLeft = 0
+      heroHorizontalTargetRef.current = 0
+      hasCompletedHeroHorizontalRef.current = false
+    }
+
+    const recomputeCompletion = () => {
+      const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0)
+      hasCompletedHeroHorizontalRef.current = track.scrollLeft >= maxScroll - 1
+    }
+
+    const onWheel = (event: WheelEvent) => {
+      const normalizedDeltaY = normalizeWheelDeltaY(event)
+      if (normalizedDeltaY === 0) return
+
+      const isAtTop = scroller.scrollTop <= 2
+      if (!isAtTop) return
+
+      const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0)
+      if (maxScroll <= 0) {
+        hasCompletedHeroHorizontalRef.current = true
+        return
+      }
+
+      if (normalizedDeltaY > 0) {
+        if (hasCompletedHeroHorizontalRef.current) return
+
+        const remainingScroll = maxScroll - track.scrollLeft
+        if (remainingScroll <= 0.5) {
+          hasCompletedHeroHorizontalRef.current = true
+          return
+        }
+
+        const horizontalPush = Math.abs(normalizedDeltaY) * HERO_WHEEL_TO_HORIZONTAL_RATIO
+        event.preventDefault()
+        const nextScrollLeft = Math.min(maxScroll, track.scrollLeft + horizontalPush)
+        heroHorizontalTargetRef.current = nextScrollLeft
+        startHeroAnimation()
+        return
+      }
+
+      // Wheel up while at the top of the scroller: rewind the horizontal
+      // carousel back to the first slide before releasing the lock.
+      if (track.scrollLeft <= 0.5) {
+        hasCompletedHeroHorizontalRef.current = false
+        heroHorizontalTargetRef.current = 0
+        track.scrollLeft = 0
+        return
+      }
+
+      const horizontalPush = Math.abs(normalizedDeltaY) * HERO_WHEEL_TO_HORIZONTAL_RATIO
+      event.preventDefault()
+      hasCompletedHeroHorizontalRef.current = false
+      const nextScrollLeft = Math.max(0, track.scrollLeft - horizontalPush)
+      heroHorizontalTargetRef.current = nextScrollLeft
+      startHeroAnimation()
+    }
+
+    requestAnimationFrame(resetTrackPosition)
+    scroller.addEventListener('wheel', onWheel, { passive: false })
+    window.addEventListener('resize', recomputeCompletion)
+
+    return () => {
+      if (heroHorizontalRafRef.current !== null) {
+        cancelAnimationFrame(heroHorizontalRafRef.current)
+        heroHorizontalRafRef.current = null
+      }
+      scroller.removeEventListener('wheel', onWheel)
+      window.removeEventListener('resize', recomputeCompletion)
+    }
+  }, [])
+
+  const onHeroPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    const track = heroTrackRef.current
+    if (!track) return
+    if (heroHorizontalRafRef.current !== null) {
+      cancelAnimationFrame(heroHorizontalRafRef.current)
+      heroHorizontalRafRef.current = null
+    }
+    isDraggingRef.current = true
+    dragStartXRef.current = event.clientX
+    dragStartScrollLeftRef.current = track.scrollLeft
+    heroHorizontalTargetRef.current = track.scrollLeft
+    track.classList.add('is-dragging')
+    track.setPointerCapture(event.pointerId)
+  }
+
+  const onHeroPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const track = heroTrackRef.current
+    if (!track || !isDraggingRef.current) return
+    const deltaX = event.clientX - dragStartXRef.current
+    track.scrollLeft = dragStartScrollLeftRef.current - deltaX
+    heroHorizontalTargetRef.current = track.scrollLeft
+  }
+
+  const onHeroPointerEnd = (event: PointerEvent<HTMLDivElement>) => {
+    const track = heroTrackRef.current
+    if (!track) return
+    isDraggingRef.current = false
+    track.classList.remove('is-dragging')
+    heroHorizontalTargetRef.current = track.scrollLeft
+    const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0)
+    hasCompletedHeroHorizontalRef.current = track.scrollLeft >= maxScroll - 1
+    if (track.hasPointerCapture(event.pointerId)) {
+      track.releasePointerCapture(event.pointerId)
+    }
+  }
+
   return (
     <div className="mobile-stage">
       <div className="app-frame" role="region" aria-label="Prototipo app Massimo Dutti">
         <div className="app-scroll" ref={scrollAreaRef}>
           <section className="app-hero" aria-label="Imágenes del producto">
-            <figure className="app-hero__slot">
-              <OptimizedImage
-                src={imgHeroLeft}
-                alt="Modelo con vestido satinado beige"
-                loading="eager"
-                fetchPriority="high"
-                style={{ objectPosition: 'center 30%' }}
-              />
-            </figure>
-            <figure className="app-hero__slot app-hero__slot--fit">
-              <OptimizedImage
-                src={imgHero2}
-                alt="Modelo con vestido en paisaje desértico"
-                loading="eager"
-                fetchPriority="low"
-              />
-            </figure>
+            <div
+              className="app-hero__track"
+              ref={heroTrackRef}
+              onPointerDown={onHeroPointerDown}
+              onPointerMove={onHeroPointerMove}
+              onPointerUp={onHeroPointerEnd}
+              onPointerCancel={onHeroPointerEnd}
+            >
+              {heroSlides.map((slide, i) => (
+                <figure
+                  className={`app-hero__slide${slide.wide ? ' app-hero__slide--wide' : ''}`}
+                  key={i}
+                >
+                  <OptimizedImage
+                    src={slide.src}
+                    alt={slide.alt}
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={i === 0 ? 'high' : 'low'}
+                    style={{ objectPosition: slide.objectPosition }}
+                  />
+                </figure>
+              ))}
+            </div>
           </section>          <section className="app-detail" aria-label="Descripción del producto">
             <p className="app-detail__ref">Ref. 5102/703</p>
             <p className="app-detail__desc">
@@ -193,7 +364,7 @@ export function MobileView() {
           <div className="app-scroll__spacer" aria-hidden="true" />
         </div>
 
-        <div className={`app-status-bar ${isHeaderSolid ? 'is-solid' : ''}`} aria-hidden="true">
+        <div className="app-status-bar is-solid" aria-hidden="true">
           <span className="app-status-bar__time">9:41</span>
           <div className="app-status-bar__icons">
             <StatusBarSignal />
@@ -202,7 +373,7 @@ export function MobileView() {
           </div>
         </div>
 
-        <header className={`app-header ${isHeaderSolid ? 'is-solid' : ''}`}>
+        <header className="app-header is-solid">
           <button type="button" className="app-header__btn" aria-label="Volver">
             <IconArrowLeft />
           </button>
